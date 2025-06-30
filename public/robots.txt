@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://salesxmarketing.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /dashboard/
+Disallow: /auth/
+
+# Allow important pages
+Allow: /
+Allow: /features
+Allow: /pricing
+Allow: /contact
+Allow: /blog/
+
+# Crawl delay
+Crawl-delay: 1
