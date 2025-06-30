@@ -70,7 +70,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -81,12 +81,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed top-0 left-0 z-50 h-full w-64 bg-sidebar border-r border-sidebar-border transform transition-transform duration-200 ease-in-out lg:translate-x-0",
+        "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <Link href="/" className="flex items-center space-x-2">
               <Instagram className="h-8 w-8 text-primary" />
               <span className="text-lg font-bold text-gradient">SalesXMarketing</span>
@@ -112,8 +112,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   className={cn(
                     "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      ? "bg-primary text-white"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
                   <item.icon className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </nav>
 
           {/* Quick action */}
-          <div className="p-4 border-t border-sidebar-border">
+          <div className="p-4 border-t border-gray-200">
             <Link href="/campaigns/new">
               <Button className="w-full">
                 <Plus className="mr-2 h-4 w-4" />
@@ -136,7 +136,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Freemium badge */}
           <div className="p-4">
             <div className="bg-gradient-to-r from-primary to-purple-600 rounded-lg p-4 text-white text-center">
-              <Badge variant="secondary" className="mb-2 bg-white/20 text-white">Plan Freemium</Badge>
+              <Badge variant="secondary" className="mb-2 bg-white/20 text-white border-white/20">Plan Freemium</Badge>
               <p className="text-xs opacity-90 mb-2">85 jours restants</p>
               <Button variant="secondary" size="sm" className="w-full">
                 Upgrader
@@ -149,7 +149,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-gray-200">
           <div className="flex items-center justify-between px-4 py-4">
             <Button
               variant="ghost"
