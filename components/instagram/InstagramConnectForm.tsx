@@ -112,17 +112,15 @@ export default function InstagramConnectForm() {
         });
       }
 
-      // Trier par date de connexion (plus récent en premier)
       accountsArray.sort((a, b) => new Date(b.connectedAt).getTime() - new Date(a.connectedAt).getTime());
       
       setConnectedAccounts(accountsArray);
       
-      // Afficher le formulaire d'ajout si aucun compte connecté
       if (accountsArray.length === 0) {
         setShowAddForm(true);
       }
-    } catch (error) {
-      console.error('Erreur lors du chargement des comptes:', error);
+    } catch (loadError) {
+      // Silently handle errors
     }
   };
 
@@ -142,21 +140,18 @@ export default function InstagramConnectForm() {
       if (token.length < 50) {
         throw new Error('Le token semble trop court. Vérifiez que vous avez copié le token complet.');
       }
-
-      console.log('Tentative de connexion avec le token...');
       
-      // Sauvegarder le nouveau compte
       const retrievedAccountInfo = await saveInstagramAccount(user.uid, token.trim());
       
       if (retrievedAccountInfo) {
         setSuccess(`Compte Instagram @${retrievedAccountInfo.username} connecté avec succès !`);
         setToken('');
         setShowAddForm(false);
-        await loadConnectedAccounts(); // Recharger la liste
+        await loadConnectedAccounts();
       }
-    } catch (error: any) {
-      console.error('Erreur lors de la connexion:', error);
-      setError(error.message || 'Une erreur est survenue lors de la connexion du compte.');
+    } catch (submitError: unknown) {
+      const errorMessage = submitError instanceof Error ? submitError.message : 'Une erreur est survenue lors de la connexion du compte.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -170,7 +165,7 @@ export default function InstagramConnectForm() {
       await removeInstagramAccount(user.uid, accountId);
       setSuccess(`Compte @${username} déconnecté avec succès.`);
       await loadConnectedAccounts();
-    } catch (error: any) {
+    } catch (disconnectError: unknown) {
       setError('Erreur lors de la déconnexion.');
     }
   };
@@ -183,7 +178,7 @@ export default function InstagramConnectForm() {
       await refreshAccountInfo(user.uid, accountId);
       setSuccess('Informations du compte mises à jour avec succès.');
       await loadConnectedAccounts();
-    } catch (error: any) {
+    } catch (refreshError: unknown) {
       setError('Erreur lors de la mise à jour des informations du compte.');
     } finally {
       setIsRefreshing(null);
@@ -205,7 +200,6 @@ export default function InstagramConnectForm() {
 
   return (
     <div className="space-y-8">
-      {/* Comptes connectés */}
       {connectedAccounts.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -301,7 +295,6 @@ export default function InstagramConnectForm() {
                   </div>
                 </CardHeader>
                 
-                {/* Informations détaillées */}
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1">
@@ -326,7 +319,6 @@ export default function InstagramConnectForm() {
         </div>
       )}
 
-      {/* Alertes */}
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -341,10 +333,8 @@ export default function InstagramConnectForm() {
         </Alert>
       )}
 
-      {/* Formulaire d'ajout de compte */}
       {showAddForm && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Vidéo tutoriel */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -383,7 +373,6 @@ export default function InstagramConnectForm() {
             </CardContent>
           </Card>
 
-          {/* Formulaire de connexion */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -451,7 +440,6 @@ export default function InstagramConnectForm() {
         </div>
       )}
 
-      {/* Étapes détaillées */}
       <Card>
         <CardHeader>
           <CardTitle>Étapes détaillées</CardTitle>
@@ -524,7 +512,7 @@ export default function InstagramConnectForm() {
                 <div className="flex-1">
                   <h3 className="font-semibold mb-2">3. Obtenir le token d'accès</h3>
                   <div className="space-y-3 text-sm text-muted-foreground">
-                    <p>• Allez dans "Instagram Basic Display" &gt; "Basic Display"</p>
+                    <p>• Allez dans "Instagram Basic Display" > "Basic Display"</p>
                     <p>• Ajoutez un utilisateur de test (votre compte Instagram)</p>
                     <p>• Cliquez sur "Générer un token" pour cet utilisateur</p>
                     <p>• Autorisez l'application sur Instagram</p>
@@ -560,7 +548,6 @@ export default function InstagramConnectForm() {
         </CardContent>
       </Card>
 
-      {/* FAQ */}
       <Card>
         <CardHeader>
           <CardTitle>Questions fréquentes</CardTitle>

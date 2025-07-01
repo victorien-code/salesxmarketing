@@ -119,8 +119,8 @@ export default function CampaignsList() {
           for (const campaign of activeCampaigns) {
             try {
               await updateCampaignStatus(campaign.id, 'paused');
-            } catch (error) {
-              console.error('Erreur lors de la mise en pause de la campagne:', campaign.id, error);
+            } catch (updateError) {
+              // Continue with other campaigns
             }
           }
           
@@ -129,9 +129,9 @@ export default function CampaignsList() {
             setCampaigns(updatedCampaigns);
           }
         }
-      } catch (error: any) {
-        console.error('Erreur lors du chargement des campagnes:', error);
-        setError('Impossible de charger les campagnes');
+      } catch (fetchError: unknown) {
+        const errorMessage = fetchError instanceof Error ? fetchError.message : 'Impossible de charger les campagnes';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -171,9 +171,9 @@ export default function CampaignsList() {
           ? { ...campaign, status: newStatus }
           : campaign
       ));
-    } catch (error: any) {
-      console.error('Erreur lors de la mise à jour du statut:', error);
-      setError('Impossible de mettre à jour le statut de la campagne');
+    } catch (updateError: unknown) {
+      const errorMessage = updateError instanceof Error ? updateError.message : 'Impossible de mettre à jour le statut de la campagne';
+      setError(errorMessage);
     }
   };
 
@@ -185,9 +185,9 @@ export default function CampaignsList() {
     try {
       await deleteCampaign(campaignId);
       setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
-    } catch (error: any) {
-      console.error('Erreur lors de la suppression:', error);
-      setError('Impossible de supprimer la campagne');
+    } catch (deleteError: unknown) {
+      const errorMessage = deleteError instanceof Error ? deleteError.message : 'Impossible de supprimer la campagne';
+      setError(errorMessage);
     }
   };
 
@@ -200,7 +200,6 @@ export default function CampaignsList() {
     try {
       const winner = await drawContestWinner(campaignId);
       
-      // Mettre à jour la campagne localement
       setCampaigns(campaigns.map(campaign => 
         campaign.id === campaignId 
           ? { 
@@ -215,9 +214,9 @@ export default function CampaignsList() {
       ));
       
       alert(`🎉 Félicitations ! Le gagnant est : @${winner}`);
-    } catch (error: any) {
-      console.error('Erreur lors du tirage au sort:', error);
-      setError('Impossible d\'effectuer le tirage au sort');
+    } catch (drawError: unknown) {
+      const errorMessage = drawError instanceof Error ? drawError.message : 'Impossible d\'effectuer le tirage au sort';
+      setError(errorMessage);
     } finally {
       setDrawingWinner(null);
     }
@@ -358,7 +357,6 @@ export default function CampaignsList() {
                           <span>{campaign.settings.actionsPerDay} messages/jour</span>
                         </div>
                         
-                        {/* Informations spéciales pour les jeux concours */}
                         {campaign.type === 'contest_management' && campaign.contest && (
                           <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                             <div className="flex items-center justify-between">
