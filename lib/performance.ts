@@ -22,6 +22,7 @@ export const performance = {
     return React.forwardRef<any, React.ComponentProps<T>>((props, ref) => (
       <React.Suspense fallback={fallback ? React.createElement(fallback) : <div>Chargement...</div>}>
         <LazyComponent {...props} ref={ref} />
+      }
       </React.Suspense>
     ));
   },
