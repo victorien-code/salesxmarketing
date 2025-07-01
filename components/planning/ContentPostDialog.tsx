@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,7 +39,6 @@ import {
   Link as LinkIcon,
   Plus,
   Trash2,
-  Eye,
   AlertCircle,
   Loader2
 } from 'lucide-react';
@@ -58,7 +57,22 @@ interface ContentPostDialogProps {
   onOpenChange: (open: boolean) => void;
   post?: ScheduledPost | null;
   instagramAccounts: InstagramAccount[];
-  onSave: (postData: any) => void;
+  onSave: (postData: Omit<ScheduledPost, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => void;
+}
+
+interface FormData {
+  title: string;
+  content: string;
+  type: PostType;
+  instagramAccountId: string;
+  scheduledDate: string;
+  status: PostStatus;
+  hashtags: string[];
+  mentions: string[];
+  location: string;
+  link: string;
+  isReviewed: boolean;
+  mediaFiles: MediaFile[];
 }
 
 export default function ContentPostDialog({
@@ -68,19 +82,19 @@ export default function ContentPostDialog({
   instagramAccounts,
   onSave
 }: ContentPostDialogProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     content: '',
-    type: 'image' as PostType,
+    type: 'image',
     instagramAccountId: '',
     scheduledDate: '',
-    status: 'draft' as PostStatus,
-    hashtags: [] as string[],
-    mentions: [] as string[],
+    status: 'draft',
+    hashtags: [],
+    mentions: [],
     location: '',
     link: '',
     isReviewed: false,
-    mediaFiles: [] as MediaFile[]
+    mediaFiles: []
   });
   
   const [hashtagInput, setHashtagInput] = useState('');
@@ -88,32 +102,9 @@ export default function ContentPostDialog({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (post) {
-      // Mode édition
-      setFormData({
-        title: post.title,
-        content: post.content,
-        type: post.type,
-        instagramAccountId: post.instagramAccountId,
-        scheduledDate: new Date(post.scheduledDate).toISOString().slice(0, 16),
-        status: post.status,
-        hashtags: post.hashtags,
-        mentions: post.mentions || [],
-        location: post.location || '',
-        link: post.link || '',
-        isReviewed: post.isReviewed,
-        mediaFiles: post.mediaFiles || []
-      });
-    } else {
-      // Mode création
-      resetForm();
-    }
-  }, [post, open]);
-
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     const now = new Date();
-    now.setHours(now.getHours() + 1); // Par défaut dans 1 heure
+    now.setHours(now.getHours() + 1);
     
     setFormData({
       title: '',
@@ -132,7 +123,28 @@ export default function ContentPostDialog({
     setHashtagInput('');
     setMentionInput('');
     setErrors({});
-  };
+  }, [instagramAccounts]);
+
+  useEffect(() => {
+    if (post) {
+      setFormData({
+        title: post.title,
+        content: post.content,
+        type: post.type,
+        instagramAccountId: post.instagramAccountId,
+        scheduledDate: new Date(post.scheduledDate).toISOString().slice(0, 16),
+        status: post.status,
+        hashtags: post.hashtags,
+        mentions: post.mentions || [],
+        location: post.location || '',
+        link: post.link || '',
+        isReviewed: post.isReviewed,
+        mediaFiles: post.mediaFiles || []
+      });
+    } else {
+      resetForm();
+    }
+  }, [post, open, resetForm]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -277,9 +289,7 @@ export default function ContentPostDialog({
         </DialogHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Colonne gauche - Formulaire */}
           <div className="space-y-6">
-            {/* Informations de base */}
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title">Titre du post *</Label>
@@ -315,7 +325,6 @@ export default function ContentPostDialog({
               </div>
             </div>
 
-            {/* Type et compte */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Type de publication</Label>
@@ -380,7 +389,6 @@ export default function ContentPostDialog({
               </div>
             </div>
 
-            {/* Date et statut */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="scheduledDate">Date de publication *</Label>
@@ -410,7 +418,6 @@ export default function ContentPostDialog({
               </div>
             </div>
 
-            {/* Hashtags */}
             <div className="space-y-2">
               <Label>Hashtags</Label>
               <div className="flex gap-2">
@@ -448,7 +455,6 @@ export default function ContentPostDialog({
               )}
             </div>
 
-            {/* Mentions */}
             <div className="space-y-2">
               <Label>Mentions</Label>
               <div className="flex gap-2">
@@ -486,7 +492,6 @@ export default function ContentPostDialog({
               )}
             </div>
 
-            {/* Localisation et lien */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="location">Localisation</Label>
@@ -517,7 +522,6 @@ export default function ContentPostDialog({
               </div>
             </div>
 
-            {/* Options */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -534,9 +538,7 @@ export default function ContentPostDialog({
             </div>
           </div>
 
-          {/* Colonne droite - Médias et aperçu */}
           <div className="space-y-6">
-            {/* Upload de médias */}
             <div className="space-y-4">
               <Label>Fichiers médias</Label>
               
@@ -567,7 +569,6 @@ export default function ContentPostDialog({
                 <p className="text-sm text-red-500">{errors.mediaFiles}</p>
               )}
 
-              {/* Aperçu des médias */}
               {formData.mediaFiles.length > 0 && (
                 <div className="grid grid-cols-2 gap-4">
                   {formData.mediaFiles.map((file) => (
@@ -602,7 +603,6 @@ export default function ContentPostDialog({
               )}
             </div>
 
-            {/* Aperçu du post */}
             <div className="space-y-4">
               <Label>Aperçu du post</Label>
               
@@ -666,7 +666,6 @@ export default function ContentPostDialog({
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex justify-between items-center pt-6 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Annuler
