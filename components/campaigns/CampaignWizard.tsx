@@ -215,7 +215,7 @@ export default function CampaignWizard() {
         }
       };
 
-      const campaignId = await createCampaign(user.uid, newCampaign);
+      await createCampaign(user.uid, newCampaign);
       
       router.push('/campaigns');
     } catch (err: unknown) {

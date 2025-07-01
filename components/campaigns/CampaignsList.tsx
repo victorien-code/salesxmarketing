@@ -120,7 +120,7 @@ export default function CampaignsList() {
             try {
               await updateCampaignStatus(campaign.id, 'paused');
             } catch (updateError) {
-              // Continue with other campaigns
+              console.error('Error updating campaign status:', updateError);
             }
           }
           
