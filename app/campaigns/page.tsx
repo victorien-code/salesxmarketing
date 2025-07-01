@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import CampaignsList from '@/components/campaigns/CampaignsList';
+import ProtectedRoute from '../../components/auth/ProtectedRoute';
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
+import CampaignsList from '../../components/campaigns/CampaignsList';
 
 export const metadata: Metadata = {
   title: 'Campagnes - SalesXMarketing',

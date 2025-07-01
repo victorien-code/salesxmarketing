@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import SettingsTabs from '@/components/settings/SettingsTabs';
+import ProtectedRoute from '../../components/auth/ProtectedRoute';
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
+import SettingsTabs from '../../components/settings/SettingsTabs';
 
 export const metadata: Metadata = {
   title: 'Paramètres - SalesXMarketing',

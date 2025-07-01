@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import AnalyticsHeader from '@/components/analytics/AnalyticsHeader';
-import AnalyticsCharts from '@/components/analytics/AnalyticsCharts';
-import AnalyticsStats from '@/components/analytics/AnalyticsStats';
+import ProtectedRoute from '../../components/auth/ProtectedRoute';
+import DashboardLayout from '../../components/dashboard/DashboardLayout';
+import AnalyticsHeader from '../../components/analytics/AnalyticsHeader';
+import AnalyticsCharts from '../../components/analytics/AnalyticsCharts';
+import AnalyticsStats from '../../components/analytics/AnalyticsStats';
 
 export const metadata: Metadata = {
   title: 'Analyses - SalesXMarketing',
