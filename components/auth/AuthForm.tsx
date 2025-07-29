@@ -103,7 +103,7 @@ export default function AuthForm({ mode, onModeChange }: AuthFormProps) {
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
         <CardHeader className="text-center">
           {mode === 'signup' && (
-            <Badge variant="secondary" className="mb-4 mx-auto bg-blue-100 text-blue-800 border-blue-200">
+            <Badge variant="secondary" className="mb-4 mx-auto">
               🎉 3 mois gratuits pour tous les nouveaux utilisateurs
             </Badge>
           )}

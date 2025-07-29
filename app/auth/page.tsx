@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import AuthForm from '../../components/auth/AuthForm';
+import AuthForm from '@/components/auth/AuthForm';
 import { Instagram } from 'lucide-react';
 import Link from 'next/link';
 

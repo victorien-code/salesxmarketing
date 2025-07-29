@@ -1,18 +1,24 @@
 import React from 'react';
 
+// Utilitaires de performance et monitoring
+
 export const performance = {
+  // Mesurer le temps d'exécution d'une fonction
   measure: async <T>(name: string, fn: () => Promise<T>): Promise<T> => {
     const start = performance.now();
     try {
       const result = await fn();
       const end = performance.now();
+      console.log(`⏱️ ${name}: ${(end - start).toFixed(2)}ms`);
       return result;
     } catch (error) {
       const end = performance.now();
+      console.error(`❌ ${name} failed after ${(end - start).toFixed(2)}ms:`, error);
       throw error;
     }
   },
 
+  // Lazy loading pour les composants
   lazy: <T extends React.ComponentType<any>>(
     importFn: () => Promise<{ default: T }>,
     fallback?: React.ComponentType
@@ -20,13 +26,14 @@ export const performance = {
     const LazyComponent = React.lazy(importFn);
     
     return React.forwardRef<any, React.ComponentProps<T>>((props, ref) => (
-      <React.Suspense fallback={fallback ? React.createElement(fallback) : <div>Chargement...</div>}>
+      <React.Suspense fallback={fallback ? <fallback /> : <div>Chargement...</div>}>
         <LazyComponent {...props} ref={ref} />
       }
       </React.Suspense>
     ));
   },
 
+  // Préchargement des ressources critiques
   preload: {
     image: (src: string): Promise<void> => {
       return new Promise((resolve, reject) => {
@@ -69,6 +76,7 @@ export const performance = {
     }
   },
 
+  // Optimisation des images
   optimizeImage: (src: string, options: {
     width?: number;
     height?: number;
@@ -77,10 +85,12 @@ export const performance = {
   } = {}) => {
     const { width, height, quality = 80, format = 'webp' } = options;
     
+    // Si c'est une URL externe, retourner telle quelle
     if (src.startsWith('http')) {
       return src;
     }
 
+    // Construire l'URL optimisée pour Next.js
     const params = new URLSearchParams();
     if (width) params.set('w', width.toString());
     if (height) params.set('h', height.toString());
@@ -90,49 +100,54 @@ export const performance = {
     return `/_next/image?url=${encodeURIComponent(src)}&${params.toString()}`;
   },
 
+  // Monitoring des Core Web Vitals
   vitals: {
     measure: () => {
       if (typeof window === 'undefined') return;
 
-      try {
-        new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          const lastEntry = entries[entries.length - 1];
-        }).observe({ entryTypes: ['largest-contentful-paint'] });
+      // Largest Contentful Paint
+      new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        console.log('LCP:', lastEntry.startTime);
+      }).observe({ entryTypes: ['largest-contentful-paint'] });
 
-        new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          entries.forEach((_entry) => {
-            // Process entry
-          });
-        }).observe({ entryTypes: ['first-input'] });
+      // First Input Delay
+      new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          console.log('FID:', entry.processingStart - entry.startTime);
+        });
+      }).observe({ entryTypes: ['first-input'] });
 
-        let _clsValue = 0;
-        new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          entries.forEach((entry: any) => {
-            if (!entry.hadRecentInput) {
-              _clsValue += entry.value;
-            }
-          });
-        }).observe({ entryTypes: ['layout-shift'] });
-      } catch (error) {
-        // Silently handle errors
-      }
+      // Cumulative Layout Shift
+      let clsValue = 0;
+      new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+            console.log('CLS:', clsValue);
+          }
+        });
+      }).observe({ entryTypes: ['layout-shift'] });
     }
   }
 };
 
+// Hook pour mesurer les performances des composants
 export const usePerformance = (componentName: string) => {
   React.useEffect(() => {
     const start = performance.now();
     
     return () => {
-      const _end = performance.now();
+      const end = performance.now();
+      console.log(`🔧 ${componentName} render time: ${(end - start).toFixed(2)}ms`);
     };
   });
 };
 
+// Utilitaire pour le code splitting par route
 export const createRouteComponent = <T extends Record<string, any>>(
   importFn: () => Promise<{ default: React.ComponentType<T> }>,
   loadingComponent?: React.ComponentType

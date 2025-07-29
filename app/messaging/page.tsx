@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import DashboardLayout from '../../components/dashboard/DashboardLayout';
-import MessagingInterface from '../../components/messaging/MessagingInterface';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import MessagingInterface from '@/components/messaging/MessagingInterface';
 
 export const metadata: Metadata = {
   title: 'Messagerie Instagram - SalesXMarketing',

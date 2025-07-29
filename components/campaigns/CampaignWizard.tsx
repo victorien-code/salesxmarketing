@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -22,10 +23,12 @@ import {
   Link as LinkIcon,
   AlertCircle,
   Loader2,
+  FileText,
   Trophy,
   Plus,
   Trash2,
   Clock,
+  Gift,
   Zap,
   Info
 } from 'lucide-react';
@@ -77,25 +80,6 @@ interface MessageConfig {
   delay: number; // en minutes
 }
 
-interface CampaignFormData {
-  name: string;
-  description: string;
-  type: string;
-  audience: {
-    type: string;
-    postUrl: string;
-    csvAccounts: CSVAccount[];
-  };
-  settings: {
-    actionsPerDay: number;
-    delayBetweenMessages: number;
-    verifyFollowers: boolean;
-    respectApiLimits: boolean;
-  };
-  messages: MessageConfig[];
-  winnerMessage: string;
-}
-
 export default function CampaignWizard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedType, setSelectedType] = useState('');
@@ -106,25 +90,28 @@ export default function CampaignWizard() {
   const { user } = useAuth();
   const router = useRouter();
 
-  const [campaignData, setCampaignData] = useState<CampaignFormData>({
+  const [campaignData, setCampaignData] = useState({
     name: '',
     description: '',
     type: '',
+    // Audience settings
     audience: {
-      type: '',
+      type: '', // 'new_followers', 'csv_followers', 'post_responses', 'post_comments'
       postUrl: '',
-      csvAccounts: [],
+      csvAccounts: [] as CSVAccount[],
     },
+    // Configuration settings
     settings: {
       actionsPerDay: 50,
-      delayBetweenMessages: 60,
+      delayBetweenMessages: 60, // en minutes
       verifyFollowers: true,
       respectApiLimits: true,
     },
+    // Messages avec système de cartes
     messages: [
       { id: '1', content: '', delay: 0 }
-    ],
-    winnerMessage: '',
+    ] as MessageConfig[],
+    winnerMessage: '', // Pour les jeux concours
   });
 
   const progress = (currentStep / steps.length) * 100;
@@ -145,7 +132,7 @@ export default function CampaignWizard() {
     const newMessage: MessageConfig = {
       id: Date.now().toString(),
       content: '',
-      delay: 60
+      delay: 60 // délai par défaut de 60 minutes
     };
     setCampaignData({
       ...campaignData,
@@ -215,12 +202,13 @@ export default function CampaignWizard() {
         }
       };
 
-      await createCampaign(user.uid, newCampaign);
+      const campaignId = await createCampaign(user.uid, newCampaign);
+      console.log('Campagne créée avec l\'ID:', campaignId);
       
       router.push('/campaigns');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue lors de la création de la campagne';
-      setError(errorMessage);
+    } catch (error: any) {
+      console.error('Erreur lors de la création de la campagne:', error);
+      setError(error.message || 'Une erreur est survenue lors de la création de la campagne');
     } finally {
       setIsLoading(false);
     }
@@ -413,8 +401,10 @@ export default function CampaignWizard() {
                       )}
                     </div>
                     
+                    {/* Configuration spécifique dans la carte */}
                     {selectedAudience === option.value && (
                       <div className="mt-4 pt-4 border-t space-y-4">
+                        {/* URL de post */}
                         {(option.value === 'post_responses' || 
                           option.value === 'post_comments' || 
                           option.value === 'post_likes' ||
@@ -440,6 +430,7 @@ export default function CampaignWizard() {
                           </div>
                         )}
 
+                        {/* Import CSV pour les followers spécifiques */}
                         {option.value === 'csv_followers' && (
                           <div className="space-y-4">
                             <Alert>
@@ -530,6 +521,7 @@ export default function CampaignWizard() {
             </div>
             
             <div className="space-y-6">
+              {/* Nom et description - Cartes séparées */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Informations générales</CardTitle>
@@ -557,6 +549,7 @@ export default function CampaignWizard() {
                 </CardContent>
               </Card>
 
+              {/* Paramètres généraux */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Paramètres d'envoi</CardTitle>
@@ -602,6 +595,7 @@ export default function CampaignWizard() {
                 </CardContent>
               </Card>
 
+              {/* Messages - Système de cartes */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Séquence de messages</CardTitle>
@@ -630,6 +624,7 @@ export default function CampaignWizard() {
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-4">
+                        {/* Délai (sauf pour le premier message) */}
                         {index > 0 && (
                           <div className="space-y-2">
                             <Label className="flex items-center gap-2">
@@ -648,6 +643,7 @@ export default function CampaignWizard() {
                           </div>
                         )}
                         
+                        {/* Contenu du message */}
                         <div className="space-y-2">
                           <Label>Contenu du message</Label>
                           <Textarea
@@ -664,6 +660,7 @@ export default function CampaignWizard() {
                     </Card>
                   ))}
                   
+                  {/* Bouton pour ajouter un message */}
                   <Button
                     variant="outline"
                     onClick={addMessage}
@@ -675,6 +672,7 @@ export default function CampaignWizard() {
                 </CardContent>
               </Card>
 
+              {/* Message gagnant pour les jeux concours */}
               {selectedType === 'contest_management' && (
                 <Card>
                   <CardHeader>
@@ -706,6 +704,7 @@ export default function CampaignWizard() {
                 </Card>
               )}
 
+              {/* Champs disponibles */}
               {availableFields.length > 1 && (
                 <Card>
                   <CardHeader>
@@ -781,6 +780,7 @@ export default function CampaignWizard() {
                   </p>
                 </div>
 
+                {/* Informations sur les comptes CSV */}
                 {campaignData.audience.csvAccounts && campaignData.audience.csvAccounts.length > 0 && (
                   <div className="pt-4 border-t">
                     <Label className="text-sm font-medium">Comptes ciblés</Label>

@@ -71,19 +71,8 @@ const nextConfig = {
     ];
   },
   
-  // Configuration Webpack pour résoudre les problèmes de modules
+  // Webpack configuration
   webpack: (config, { dev, isServer }) => {
-    // Résolution des alias
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').resolve(__dirname),
-      '@/components': require('path').resolve(__dirname, 'components'),
-      '@/lib': require('path').resolve(__dirname, 'lib'),
-      '@/contexts': require('path').resolve(__dirname, 'contexts'),
-      '@/hooks': require('path').resolve(__dirname, 'hooks'),
-      '@/app': require('path').resolve(__dirname, 'app')
-    };
-
     // Optimisations pour la production
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
@@ -120,9 +109,6 @@ const nextConfig = {
   
   // PoweredByHeader
   poweredByHeader: false,
-  
-  // Configuration spécifique pour Netlify
-  output: 'standalone',
   
   // Bundle analyzer (optionnel)
   ...(process.env.ANALYZE === 'true' && {

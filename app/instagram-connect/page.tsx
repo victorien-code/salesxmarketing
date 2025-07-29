@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import DashboardLayout from '../../components/dashboard/DashboardLayout';
-import InstagramConnectForm from '../../components/instagram/InstagramConnectForm';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import InstagramConnectForm from '@/components/instagram/InstagramConnectForm';
 
 export const metadata: Metadata = {
   title: 'Connecter Instagram - SalesXMarketing',

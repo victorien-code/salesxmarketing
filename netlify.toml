@@ -1,18 +1,13 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_ENV = "production"
   NEXT_TELEMETRY_DISABLED = "1"
-  NODE_VERSION = "18"
-  NPM_FLAGS = "--production=false"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-# Configuration pour les redirections Next.js
+# Redirections pour SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -56,7 +51,7 @@
   [headers.values]
     Cache-Control = "public, max-age=86400"
 
-# Cache pour JS et CSS
+# Compression
 [[headers]]
   for = "*.js"
   [headers.values]
@@ -83,5 +78,6 @@
   to = "/auth?mode=signup"
   status = 301
 
+# Configuration pour les fonctions Edge (si nécessaire)
 [functions]
   directory = "netlify/functions"

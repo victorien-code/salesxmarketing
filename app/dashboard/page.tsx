@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
-import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import DashboardLayout from '../../components/dashboard/DashboardLayout';
-import StatsCards from '../../components/dashboard/StatsCards';
-import RecentCampaigns from '../../components/dashboard/RecentCampaigns';
-import QuickActions from '../../components/dashboard/QuickActions';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import StatsCards from '@/components/dashboard/StatsCards';
+import RecentCampaigns from '@/components/dashboard/RecentCampaigns';
+import QuickActions from '@/components/dashboard/QuickActions';
 
 export const metadata: Metadata = {
   title: 'Dashboard - SalesXMarketing',
